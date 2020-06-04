@@ -1,5 +1,5 @@
 # Rabbitmq_Example
-Set up RabbitMQ message broker. Asp.Net Core 3.1
+Set up RabbitMQ message broker with Asp.Net Core 3.1 and Docker.
 
 This project is an example of how to run a RabbitMQ in Asp.Net Core 3.1 .
 
