@@ -26,7 +26,7 @@ namespace Producer
             }
 
             app.UseRouting();
-            app.UseRabbitMqListener(new RabbitMqConnection());
+            app.UseRabbitMqConnectionListener(new RabbitMqConnection());
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

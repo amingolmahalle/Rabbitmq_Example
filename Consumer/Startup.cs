@@ -24,7 +24,7 @@ namespace Consumer
             }
 
             app.UseRouting();
-            app.UseRabbitMqListener(new RabbitMqConnection());
+            app.UseRabbitMqConnectionListener(new RabbitMqConnection());
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });
