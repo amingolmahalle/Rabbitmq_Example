@@ -1,3 +1,4 @@
+using Common.RabbitMq;
 using Common.RabbitMQ;
 using Microsoft.AspNetCore.Mvc;
 

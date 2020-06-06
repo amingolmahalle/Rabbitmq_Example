@@ -1,4 +1,6 @@
+using Common.RabbitMq;
 using Common.RabbitMQ;
+using Common.RabbitMq.Extensions;
 using Common.RabbitMQ.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

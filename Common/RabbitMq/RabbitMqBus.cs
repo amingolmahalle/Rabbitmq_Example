@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Common.Attributes;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 
-namespace Common.RabbitMQ
+namespace Common.RabbitMq
 {
     public class RabbitMqBus : IRabbitMqBus
     {
         private readonly IRabbitMqConnection _rabbitMqConnection;
+        
+        private string _queueName;
+        
+        private string _exchangeName = "ecommerce_bus";
 
         public RabbitMqBus(IRabbitMqConnection rabbitMqConnection)
         {
@@ -36,7 +41,9 @@ namespace Common.RabbitMQ
             string routingKey,
             string exchange = "")
         {
-            var channel = _rabbitMqConnection.GetConnection();
+            _rabbitMqConnection.TryConnection();
+            
+            var channel = _rabbitMqConnection.CreateModel();
             var props = channel.CreateBasicProperties();
 
             // props.Headers=null 
@@ -66,7 +73,9 @@ namespace Common.RabbitMQ
             string consumerTag = "",
             IDictionary<string, object> arguments = null)
         {
-            var channel = _rabbitMqConnection.GetConnection();
+            _rabbitMqConnection.TryConnection();
+
+            var channel = _rabbitMqConnection.CreateModel();
 
             channel.BasicConsume(queueName,
                 false,
@@ -75,6 +84,32 @@ namespace Common.RabbitMQ
                 false,
                 arguments,
                 consumer);
+        }
+
+        private IModel CreateChannel(Type @event)
+        {
+            Init(@event);
+
+            _rabbitMqConnection.TryConnection();
+
+            var channel = _rabbitMqConnection.CreateModel();
+
+            channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
+            channel.QueueDeclare(_queueName, true, false, false, null);
+            channel.QueueBind(_queueName, _exchangeName, _queueName, null);
+
+            return channel;
+        }
+
+        private void Init(Type @event)
+        {
+            foreach (Attribute attribute in @event.GetCustomAttributes(true))
+            {
+                if (!(attribute is QueueAttribute queue))
+                    continue;
+
+                _queueName = queue.QueueName ?? @event.Name;
+            }
         }
     }
 }

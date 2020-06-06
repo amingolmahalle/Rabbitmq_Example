@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 
-namespace Common.RabbitMQ.Extensions
+namespace Common.RabbitMq.Extensions
 {
     public static class RabbitMqConnectionExtension
     {
@@ -8,7 +8,7 @@ namespace Common.RabbitMQ.Extensions
             this IApplicationBuilder app,
             IRabbitMqConnection rabbitMqConnection)
         {
-            rabbitMqConnection.CreateConnection();
+            rabbitMqConnection.TryConnection();
         }
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using RabbitMQ.Client;
 
-namespace Common.RabbitMQ
+namespace Common.RabbitMq
 {
     public interface IRabbitMqBus
     {
