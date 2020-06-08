@@ -13,7 +13,7 @@ namespace Common.RabbitMq
         
         private string _queueName;
         
-        private string _exchangeName = "ecommerce_bus";
+        private string _exchangeName;
 
         public RabbitMqBus(IRabbitMqConnection rabbitMqConnection)
         {
@@ -88,7 +88,7 @@ namespace Common.RabbitMq
 
         private IModel CreateChannel(Type @event)
         {
-            Init(@event);
+            Initialize(@event);
 
             _rabbitMqConnection.TryConnection();
 
@@ -101,7 +101,7 @@ namespace Common.RabbitMq
             return channel;
         }
 
-        private void Init(Type @event)
+        private void Initialize(Type @event)
         {
             foreach (Attribute attribute in @event.GetCustomAttributes(true))
             {
@@ -109,6 +109,7 @@ namespace Common.RabbitMq
                     continue;
 
                 _queueName = queue.QueueName ?? @event.Name;
+                _exchangeName = queue.ExchangeName;
             }
         }
     }

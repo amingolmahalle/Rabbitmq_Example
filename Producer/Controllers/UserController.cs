@@ -1,25 +1,23 @@
 using Common.RabbitMq;
-using Common.RabbitMQ;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Producer.Controllers
 {
-    [Route("messages")]
-    public class Messages : Controller
+    [Route("user")]
+    public class UserController : Controller
     {
         private readonly IRabbitMqBus _rabbitMqBus;
 
-        public Messages(IRabbitMqBus rabbitMqBus)
+        public UserController(IRabbitMqBus rabbitMqBus)
         {
             _rabbitMqBus = rabbitMqBus;
         }
 
         [HttpGet]
-        [Route("send")]
-        public IActionResult Send()
+        [Route("GetAllUsers")]
+        public IActionResult GetAllUsers()
         {
-            //   byte[] messageBuffer = Encoding.Default.GetBytes("Send data by Direct Message");
-            var message = "send data for check rabbitMq";
+            var message = "helllllllllllllllo";//inja bayad az GetallUserCommand ye new besazi
 
             _rabbitMqBus.Send(message, "directexchange_key", "testExchange");
 
