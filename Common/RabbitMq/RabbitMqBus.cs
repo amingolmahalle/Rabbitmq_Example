@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using Common.Attributes;
@@ -19,10 +18,16 @@ namespace Common.RabbitMq
 
         private string _exchangeName;
 
-        public RabbitMqBus(IRabbitMqConnection rabbitMqConnection)
+        private readonly string _endpointId;
+
+        private readonly string _endpointName;
+
+        public RabbitMqBus(string endpointId, string endpointName)
         {
-            _rabbitMqConnection = rabbitMqConnection;
-          //  Subscribe();
+            _rabbitMqConnection = new RabbitMqConnection();
+            _endpointId = endpointId;
+            _endpointName = endpointName;
+            //  Subscribe();
         }
 
         public void Send(object message)
@@ -45,8 +50,6 @@ namespace Common.RabbitMq
             string routingKey,
             string exchange = "")
         {
-            _rabbitMqConnection.TryConnection();
-
             var channel = CreateChannel();
             var props = channel.CreateBasicProperties();
 
@@ -54,7 +57,7 @@ namespace Common.RabbitMq
             props.MessageId = Guid.NewGuid().ToString();
             props.ContentType = "application/json";
             props.ContentEncoding = "utf8";
-            //props.AppId = EndpointId; // ba51ac1b-d974-4722-a639-a967514478d8
+            props.AppId = _endpointId;
             props.CorrelationId = props.CorrelationId == null || string.IsNullOrEmpty(props.CorrelationId)
                 ? Guid.NewGuid().ToString()
                 : props.CorrelationId;
@@ -73,8 +76,6 @@ namespace Common.RabbitMq
 
         public void Receive(Type @event)
         {
-            _rabbitMqConnection.TryConnection();
-
             Initialize(@event);
 
             var channel = CreateChannel();
@@ -126,9 +127,9 @@ namespace Common.RabbitMq
                 if (!(attribute is QueueAttribute queue))
                     continue;
 
-                _routingKey = queue.QueueName ?? @event.Name;
-                _exchangeName = queue.ExchangeName;
-                _queueName = queue.QueueName;
+                _routingKey = queue.RoutingKey;
+                _exchangeName = string.IsNullOrEmpty(queue.ExchangeName) ? string.Empty : queue.ExchangeName;
+                _queueName = string.IsNullOrEmpty(queue.QueueName) ? _endpointName : queue.QueueName;
             }
         }
     }

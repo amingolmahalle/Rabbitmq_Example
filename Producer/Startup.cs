@@ -1,7 +1,6 @@
+using Common.Extensions;
 using Common.RabbitMq;
-using Common.RabbitMQ;
 using Common.RabbitMq.Extensions;
-using Common.RabbitMQ.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +14,7 @@ namespace Producer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-            
-            services.AddSingleton<IRabbitMqBus, RabbitMqBus>();
-            services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
+            services.AddServiceBus(SystemConstants.HostEndpointId,SystemConstants.HostEndpointName);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
