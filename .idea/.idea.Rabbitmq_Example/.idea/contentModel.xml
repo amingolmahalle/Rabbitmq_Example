@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_Rabbitmq_Example.-1619017973.00" t="ExcludeRecursive" />
-    <e p="$PROJECT_DIR$" t="IncludeFlat">
+    <e p="C:\Users\A.GolMahaleh\AppData\local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\A.GolMahaleh\AppData\local\JetBrains\Rider2020.1\resharper-host\local\Transient\ReSharperHost\v201\SolutionCaches\_Rabbitmq_Example.1746168500.00" t="ExcludeRecursive" />
+    <e p="C:\Users\A.GolMahaleh\Documents\Rabbitmq_Example" t="IncludeFlat">
       <e p="Common" t="IncludeRecursive">
         <e p="Attributes" t="Include">
           <e p="QueueAttribute.cs" t="Include" />
         </e>
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Common.csproj" t="IncludeRecursive" />
         <e p="Helpers" t="Include">
           <e p="DateTimeHelper.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.1" t="Include">
+              <e p="Common.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
         </e>
         <e p="RabbitMq" t="Include">
           <e p="Extensions" t="Include">
@@ -24,33 +32,25 @@
           <e p="RabbitMqBus.cs" t="Include" />
           <e p="RabbitMqConnection.cs" t="Include" />
         </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.1" t="Include">
-              <e p="Common.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Consumer" t="IncludeRecursive">
-        <e p="Consumer.csproj" t="IncludeRecursive" />
-        <e p="Program.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="launchSettings.json" t="Include" />
-        </e>
-        <e p="Services" t="Include">
-          <e p="Commands" t="Include">
-            <e p="GetAllUser" t="Include">
-              <e p="GetAllUserCommand.cs" t="Include" />
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Commands" t="Include">
+          <e p="User" t="Include">
+            <e p="GetUserByMobileNumber" t="Include">
               <e p="GetAllUserCommandHandler.cs" t="Include" />
             </e>
           </e>
         </e>
-        <e p="Startup.cs" t="Include" />
-        <e p="appsettings.Development.json" t="Include" />
-        <e p="appsettings.json" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
+        <e p="Consumer.csproj" t="IncludeRecursive" />
+        <e p="Contracts" t="Include">
+          <e p="User" t="Include">
+            <e p="GetUserByMobileNumberCommand.cs" t="Include" />
+            <e p="GetUserByMobileNumberResponse.cs" t="Include" />
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
@@ -58,23 +58,27 @@
             </e>
           </e>
         </e>
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Repositories" t="Include">
+          <e p="IUserRepository.cs" t="Include" />
+          <e p="UserRepository.cs" t="Include" />
+        </e>
+        <e p="Startup.cs" t="Include" />
       </e>
+      <e p="packages" t="ExcludeRecursive" />
       <e p="Producer" t="IncludeRecursive">
+        <e p="appsettings.Development.json" t="Include" />
+        <e p="appsettings.json" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Controllers" t="Include">
           <e p="UserController.cs" t="Include" />
         </e>
         <e p="Entity" t="Include">
           <e p="User.cs" t="Include" />
         </e>
-        <e p="Producer.csproj" t="IncludeRecursive" />
-        <e p="Program.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="launchSettings.json" t="Include" />
-        </e>
-        <e p="Startup.cs" t="Include" />
-        <e p="appsettings.Development.json" t="Include" />
-        <e p="appsettings.json" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
@@ -82,9 +86,19 @@
             </e>
           </e>
         </e>
+        <e p="Producer.csproj" t="IncludeRecursive" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Startup.cs" t="Include" />
+        <e p="ViewModels" t="Include">
+          <e p="User" t="Include">
+            <e p="GetUserByMobileNumberRequest.cs" t="Include" />
+          </e>
+        </e>
       </e>
       <e p="Rabbitmq_Example.sln" t="IncludeFlat" />
-      <e p="packages" t="ExcludeRecursive" />
     </e>
   </component>
 </project>

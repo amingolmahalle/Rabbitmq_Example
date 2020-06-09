@@ -40,16 +40,6 @@ namespace Common.RabbitMq
             _connection = connectionFactory.CreateConnection();
 
             return IsConnected;
-            // var channel = connection.CreateModel();
-            //
-            // // Success Creating Exchange 
-            // channel.ExchangeDeclare("testExchange", ExchangeType.Direct);
-            //
-            // // Success Creating Queue
-            // channel.QueueDeclare("testQueue", true, false, false, null);
-            //
-            // // Success Creating Binding
-            // channel.QueueBind("testQueue", "testExchange", "directexchange_key");
         }
 
         public IModel CreateModel()

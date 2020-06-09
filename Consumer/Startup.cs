@@ -2,6 +2,7 @@ using Common.RabbitMq;
 using Common.RabbitMQ;
 using Common.RabbitMq.Extensions;
 using Common.RabbitMQ.Extensions;
+using Consumer.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,7 @@ namespace Consumer
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IUserRepository, UserRepository>();
             services.AddSingleton<IRabbitMqBus, RabbitMqBus>();
             services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
         }

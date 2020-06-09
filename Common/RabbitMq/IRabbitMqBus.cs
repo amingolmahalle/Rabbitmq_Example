@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using RabbitMQ.Client;
+using System;
 
 namespace Common.RabbitMq
 {
     public interface IRabbitMqBus
     {
-        void Send(object message, string routingKey, string exchange);
+        void Send(object message);
 
-        void Receive(string queueName, IBasicConsumer consumer, string consumerTag = "",
-            IDictionary<string, object> arguments = null);
+        void Receive(Type @event);
     }
 }

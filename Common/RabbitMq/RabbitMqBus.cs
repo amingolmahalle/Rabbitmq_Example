@@ -1,31 +1,35 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using Common.Attributes;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace Common.RabbitMq
 {
     public class RabbitMqBus : IRabbitMqBus
     {
         private readonly IRabbitMqConnection _rabbitMqConnection;
-        
+
         private string _queueName;
-        
+
+        private string _routingKey;
+
         private string _exchangeName;
 
         public RabbitMqBus(IRabbitMqConnection rabbitMqConnection)
         {
             _rabbitMqConnection = rabbitMqConnection;
+          //  Subscribe();
         }
 
-        public void Send(
-            object message,
-            string routingKey,
-            string exchange)
+        public void Send(object message)
         {
-            SendInternal(message, routingKey, exchange);
+            Initialize(message.GetType());
+
+            SendInternal(message, _routingKey, _exchangeName);
         }
 
         private void SendInternal(
@@ -42,8 +46,8 @@ namespace Common.RabbitMq
             string exchange = "")
         {
             _rabbitMqConnection.TryConnection();
-            
-            var channel = _rabbitMqConnection.CreateModel();
+
+            var channel = CreateChannel();
             var props = channel.CreateBasicProperties();
 
             // props.Headers=null 
@@ -67,36 +71,50 @@ namespace Common.RabbitMq
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
         }
 
-        public void Receive(
-            string queueName,
-            IBasicConsumer consumer,
-            string consumerTag = "",
-            IDictionary<string, object> arguments = null)
+        public void Receive(Type @event)
         {
             _rabbitMqConnection.TryConnection();
 
-            var channel = _rabbitMqConnection.CreateModel();
+            Initialize(@event);
 
-            channel.BasicConsume(queueName,
-                false,
-                consumerTag,
-                false,
-                false,
-                arguments,
+            var channel = CreateChannel();
+
+            var consumer = new EventingBasicConsumer(channel);
+            channel.BasicConsume(_queueName,
+                true,
                 consumer);
         }
 
-        private IModel CreateChannel(Type @event)
+        private void Subscribe(Assembly getExecutingAssembly)
         {
-            Initialize(@event);
+            // _getExecutingAssembly = getExecutingAssembly;
+            //
+            // var items = getExecutingAssembly.GetExportedTypes().Where(x => x.IsClass).ToList();
+            // items.ForEach(x =>
+            // {
+            //     if (x.GetInterfaces().Any(y => y == typeof(IHandleCommand<>)))
+            //     {
+            //         var consumer = x.GetConstructor(Type.EmptyTypes);
+            //
+            //         if (consumer != null)
+            //             _consumer = consumer.Invoke(new object[] { });
+            //
+            //         _consumeMethod = x.GetMethod("Handle");
+            //
+            //         Receive(x);
+            //     }
+            // });
+        }
 
+        private IModel CreateChannel()
+        {
             _rabbitMqConnection.TryConnection();
 
             var channel = _rabbitMqConnection.CreateModel();
 
             channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
-            channel.QueueDeclare(_queueName, true, false, false, null);
-            channel.QueueBind(_queueName, _exchangeName, _queueName, null);
+            channel.QueueDeclare(_routingKey, true, false, false, null);
+            channel.QueueBind(_routingKey, _exchangeName, _routingKey, null);
 
             return channel;
         }
@@ -108,8 +126,9 @@ namespace Common.RabbitMq
                 if (!(attribute is QueueAttribute queue))
                     continue;
 
-                _queueName = queue.QueueName ?? @event.Name;
+                _routingKey = queue.QueueName ?? @event.Name;
                 _exchangeName = queue.ExchangeName;
+                _queueName = queue.QueueName;
             }
         }
     }

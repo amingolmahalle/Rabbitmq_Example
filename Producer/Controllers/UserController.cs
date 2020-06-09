@@ -1,5 +1,6 @@
 using Common.RabbitMq;
 using Microsoft.AspNetCore.Mvc;
+using Producer.ViewModels.User;
 
 namespace Producer.Controllers
 {
@@ -14,12 +15,15 @@ namespace Producer.Controllers
         }
 
         [HttpGet]
-        [Route("GetAllUsers")]
-        public IActionResult GetAllUsers()
+        [Route("GetUserByMobile/{mobileNumber}")]
+        public IActionResult GetUserByMobileNumber([FromRoute] string mobileNumber)
         {
-            var message = "helllllllllllllllo";//inja bayad az GetallUserCommand ye new besazi
+            var message = new GetUserByMobileNumberRequest
+            {
+                MobileNumber = mobileNumber
+            };
 
-            _rabbitMqBus.Send(message, "directexchange_key", "testExchange");
+            _rabbitMqBus.Send(message);
 
             return Ok("Message Sent");
         }
