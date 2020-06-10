@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Common.Attributes;
@@ -22,12 +24,17 @@ namespace Common.RabbitMq
 
         private readonly string _endpointName;
 
+        private MethodInfo _consumeMethod;
+
+        private object _consumer;
+
         public RabbitMqBus(string endpointId, string endpointName)
         {
             _rabbitMqConnection = new RabbitMqConnection();
             _endpointId = endpointId;
             _endpointName = endpointName;
-            //  Subscribe();
+
+            Subscribe();
         }
 
         public void Send(object message)
@@ -68,12 +75,26 @@ namespace Common.RabbitMq
                 basicProperties: props,
                 body: message);
         }
-
-        private byte[] PopulateMessage(object message)
+        
+        private void Subscribe()
         {
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-        }
+            var typesToRegister = AllTypes.Where(it => it.IsClass).ToList();
+            typesToRegister.ForEach(it =>
+            {
+                if (it.GetInterfaces().Any(y => y == typeof(IHandleCommand)))
+                {
+                    var consumer = it.GetConstructor(Type.EmptyTypes);
 
+                    if (consumer != null)
+                        _consumer = consumer.Invoke(new object[] { });
+
+                    _consumeMethod = it.GetMethod("Handle");
+
+                    Receive(it);
+                }
+            });
+        }
+        
         public void Receive(Type @event)
         {
             Initialize(@event);
@@ -81,30 +102,14 @@ namespace Common.RabbitMq
             var channel = CreateChannel();
 
             var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += ReceivedEvent;
             channel.BasicConsume(_queueName,
                 true,
                 consumer);
         }
 
-        private void Subscribe(Assembly getExecutingAssembly)
+        private void ReceivedEvent(object sender, BasicDeliverEventArgs e)
         {
-            // _getExecutingAssembly = getExecutingAssembly;
-            //
-            // var items = getExecutingAssembly.GetExportedTypes().Where(x => x.IsClass).ToList();
-            // items.ForEach(x =>
-            // {
-            //     if (x.GetInterfaces().Any(y => y == typeof(IHandleCommand<>)))
-            //     {
-            //         var consumer = x.GetConstructor(Type.EmptyTypes);
-            //
-            //         if (consumer != null)
-            //             _consumer = consumer.Invoke(new object[] { });
-            //
-            //         _consumeMethod = x.GetMethod("Handle");
-            //
-            //         Receive(x);
-            //     }
-            // });
         }
 
         private IModel CreateChannel()
@@ -131,6 +136,16 @@ namespace Common.RabbitMq
                 _exchangeName = string.IsNullOrEmpty(queue.ExchangeName) ? string.Empty : queue.ExchangeName;
                 _queueName = string.IsNullOrEmpty(queue.QueueName) ? _endpointName : queue.QueueName;
             }
+        }
+
+        private static byte[] PopulateMessage(object message)
+        {
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+        }
+        
+        private static IEnumerable<Type> AllTypes
+        {
+            get { return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()); }
         }
     }
 }

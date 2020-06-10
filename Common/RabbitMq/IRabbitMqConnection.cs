@@ -5,7 +5,7 @@ namespace Common.RabbitMq
 {
     public interface IRabbitMqConnection: IDisposable
     {
-        bool TryConnection();
+        void TryConnection();
         IModel CreateModel();
     }
 }

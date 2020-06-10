@@ -1,7 +1,6 @@
-using Common.RabbitMq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Common.Extensions
+namespace Common.RabbitMq.Extensions
 {
     public static class ServiceBusRootExtension
     {

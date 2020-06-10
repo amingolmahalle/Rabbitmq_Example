@@ -1,4 +1,3 @@
-using Common.Extensions;
 using Common.RabbitMq;
 using Common.RabbitMq.Extensions;
 using Consumer.Repositories;

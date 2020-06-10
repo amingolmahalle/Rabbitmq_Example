@@ -23,23 +23,24 @@ namespace Common.RabbitMq
                 {
                     return true;
                 }
-                
+
                 return false;
             }
         }
 
-        public bool TryConnection()
+        public void TryConnection()
         {
-            var connectionFactory = new ConnectionFactory
+            if (!IsConnected)
             {
-                HostName = HostName,
-                UserName = UserName,
-                Password = Password
-            };
+                var connectionFactory = new ConnectionFactory
+                {
+                    HostName = HostName,
+                    UserName = UserName,
+                    Password = Password
+                };
 
-            _connection = connectionFactory.CreateConnection();
-
-            return IsConnected;
+                _connection = connectionFactory.CreateConnection();
+            }
         }
 
         public IModel CreateModel()
@@ -47,11 +48,12 @@ namespace Common.RabbitMq
             if (IsConnected)
             {
                 var channel = _connection.CreateModel();
-                
+
                 channel.BasicQos(0, 1, false);
 
                 return channel;
             }
+
             throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
         }
 
