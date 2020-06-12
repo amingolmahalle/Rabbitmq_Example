@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Common.AssemblyScanner;
 using Common.Attributes;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -14,6 +14,8 @@ namespace Common.RabbitMq
     {
         private readonly IRabbitMqConnection _rabbitMqConnection;
 
+        private IModel _consumerChannel;
+
         private string _queueName;
 
         private string _routingKey;
@@ -24,9 +26,9 @@ namespace Common.RabbitMq
 
         private readonly string _endpointName;
 
-        private MethodInfo _consumeMethod;
+        //private MethodInfo _consumeMethod;
 
-        private object _consumer;
+        //private object _consumer;
 
         public RabbitMqBus(string endpointId, string endpointName)
         {
@@ -34,13 +36,12 @@ namespace Common.RabbitMq
             _endpointId = endpointId;
             _endpointName = endpointName;
 
+          //  StartReceiver();
             Subscribe();
         }
 
         public void Send(object message)
         {
-            Initialize(message.GetType());
-
             SendInternal(message, _routingKey, _exchangeName);
         }
 
@@ -49,16 +50,17 @@ namespace Common.RabbitMq
             string routingKey,
             string exchange = "")
         {
-            SendBytes(PopulateMessage(message), routingKey, exchange);
+            SendBytes(PopulateMessage(message), message.GetType(), routingKey, exchange);
         }
 
         private void SendBytes(
             byte[] message,
+            Type messageType,
             string routingKey,
             string exchange = "")
         {
-            var channel = CreateChannel();
-            var props = channel.CreateBasicProperties();
+            _consumerChannel = CreateChannel(messageType);
+            var props = _consumerChannel.CreateBasicProperties();
 
             // props.Headers=null 
             props.MessageId = Guid.NewGuid().ToString();
@@ -69,58 +71,77 @@ namespace Common.RabbitMq
                 ? Guid.NewGuid().ToString()
                 : props.CorrelationId;
 
-            channel.BasicPublish(
+            _consumerChannel.BasicPublish(
                 exchange: exchange,
                 routingKey: routingKey,
                 basicProperties: props,
                 body: message);
         }
-        
+
         private void Subscribe()
         {
-            var typesToRegister = AllTypes.Where(it => it.IsClass).ToList();
-            typesToRegister.ForEach(it =>
+            var typesToRegister = Types.GetHandlers();
+
+            foreach (var item in typesToRegister)
             {
-                if (it.GetInterfaces().Any(y => y == typeof(IHandleCommand)))
-                {
-                    var consumer = it.GetConstructor(Type.EmptyTypes);
+                // var message = JsonConvert.DeserializeObject(messageb, messageType);
+                // item.GetMethod("Handle")?.Invoke(Activator.CreateInstance(item), 
+                //     new[] { message });
+                
+                
+                //var consumer = item.GetConstructor(Type.EmptyTypes);
+                //
+                // if (consumer != null)
+                //  _consumer = consumer.Invoke(new object[] { });
 
-                    if (consumer != null)
-                        _consumer = consumer.Invoke(new object[] { });
+                //_consumeMethod = item.GetMethod("Handle");
 
-                    _consumeMethod = it.GetMethod("Handle");
-
-                    Receive(it);
-                }
-            });
+               // StartReceiver(item);
+            }
         }
-        
-        public void Receive(Type @event)
+
+        private void StartReceiver(Type @event)
+        {
+            using (_consumerChannel = CreateChannel(@event))
+            {
+                var consumer = new EventingBasicConsumer(_consumerChannel);
+
+                consumer.Received += Message_Received;
+
+                _consumerChannel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+            }
+        }
+
+        private void Message_Received(object sender, BasicDeliverEventArgs e)
+        {
+            // if (_consumeMethod != null)
+            // {
+            //     _consumeMethod.Invoke(_consumer, new[]
+            //     {
+            //         JsonConvert.DeserializeObject(Encoding.UTF8.GetString(e.Body.ToArray()),
+            //             _consumeMethod.GetParameters()
+            //                 .FirstOrDefault()?.ParameterType)
+            //     });
+            //}
+        }
+
+        private IModel CreateChannel(Type @event)
         {
             Initialize(@event);
 
-            var channel = CreateChannel();
-
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += ReceivedEvent;
-            channel.BasicConsume(_queueName,
-                true,
-                consumer);
-        }
-
-        private void ReceivedEvent(object sender, BasicDeliverEventArgs e)
-        {
-        }
-
-        private IModel CreateChannel()
-        {
             _rabbitMqConnection.TryConnection();
 
             var channel = _rabbitMqConnection.CreateModel();
 
             channel.ExchangeDeclare(exchange: _exchangeName, type: ExchangeType.Direct);
-            channel.QueueDeclare(_routingKey, true, false, false, null);
-            channel.QueueBind(_routingKey, _exchangeName, _routingKey, null);
+            channel.QueueDeclare(_queueName, true, false, false, null);
+            channel.QueueBind(_queueName, _exchangeName, _routingKey, null);
+
+            channel.CallbackException += (sender, ea) =>
+            {
+                _consumerChannel.Dispose();
+                _consumerChannel = CreateChannel(@event);
+            };
 
             return channel;
         }
@@ -141,11 +162,6 @@ namespace Common.RabbitMq
         private static byte[] PopulateMessage(object message)
         {
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-        }
-        
-        private static IEnumerable<Type> AllTypes
-        {
-            get { return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()); }
         }
     }
 }

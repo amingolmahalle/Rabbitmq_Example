@@ -9,7 +9,6 @@ namespace Common.RabbitMq.Extensions
             var rabbitMqBusInstance = new RabbitMqBus(endPointId,endPointName);
             
             service.AddSingleton(typeof(IRabbitMqBus),rabbitMqBusInstance);
-            service.AddSingleton(typeof(RabbitMqBus), rabbitMqBusInstance);
         }
     }
 }

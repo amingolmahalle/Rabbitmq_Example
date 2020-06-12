@@ -14,6 +14,8 @@ namespace Common.RabbitMq
         private IConnection _connection;
 
         private bool _disposed;
+        
+        private object _syncRoot = new object();
 
         private bool IsConnected
         {
@@ -32,14 +34,17 @@ namespace Common.RabbitMq
         {
             if (!IsConnected)
             {
-                var connectionFactory = new ConnectionFactory
+                lock (_syncRoot)
                 {
-                    HostName = HostName,
-                    UserName = UserName,
-                    Password = Password
-                };
+                    var connectionFactory = new ConnectionFactory
+                    {
+                        HostName = HostName,
+                        UserName = UserName,
+                        Password = Password
+                    };
 
-                _connection = connectionFactory.CreateConnection();
+                    _connection = connectionFactory.CreateConnection();
+                }
             }
         }
 

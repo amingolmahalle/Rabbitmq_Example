@@ -12,8 +12,9 @@ namespace Producer
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddServiceBus(SystemConstants.HostEndpointId,SystemConstants.HostEndpointName);
+
+            services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -24,7 +25,6 @@ namespace Producer
             }
 
             app.UseRouting();
-            app.UseRabbitMqConnectionListener(new RabbitMqConnection());
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
