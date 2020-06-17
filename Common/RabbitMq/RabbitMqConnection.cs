@@ -1,4 +1,3 @@
-using System;
 using RabbitMQ.Client;
 
 namespace Common.RabbitMq
@@ -14,8 +13,8 @@ namespace Common.RabbitMq
         private IConnection _connection;
 
         private bool _disposed;
-        
-        private object _syncRoot = new object();
+
+        private readonly object _syncRoot = new object();
 
         private bool IsConnected
         {
@@ -30,7 +29,7 @@ namespace Common.RabbitMq
             }
         }
 
-        public void TryConnection()
+        public IConnection TryConnection()
         {
             if (!IsConnected)
             {
@@ -46,20 +45,8 @@ namespace Common.RabbitMq
                     _connection = connectionFactory.CreateConnection();
                 }
             }
-        }
 
-        public IModel CreateModel()
-        {
-            if (IsConnected)
-            {
-                var channel = _connection.CreateModel();
-
-                channel.BasicQos(0, 1, false);
-
-                return channel;
-            }
-
-            throw new InvalidOperationException("No RabbitMQ connections are available to perform this action");
+            return _connection;
         }
 
         public void Dispose()
