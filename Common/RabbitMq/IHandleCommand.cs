@@ -7,6 +7,7 @@ namespace Common.RabbitMq
         Task Handle(T message);
     }
 
+    /// <summary> marker </summary>
     public interface IHandleCommand
     {
     }

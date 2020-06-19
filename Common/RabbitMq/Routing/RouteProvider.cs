@@ -10,6 +10,30 @@ namespace Common.RabbitMq.Routing
     {
         private readonly List<MessageRouteTableValue> _routes = new List<MessageRouteTableValue>();
 
+        private static readonly object Padlock = new object();
+
+        private static RouteProvider _instance;
+
+        private RouteProvider()
+        {
+        }
+
+        public static RouteProvider GetInstance()
+        {
+            if (_instance == null)
+            {
+                lock (Padlock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new RouteProvider();
+                    }
+                }
+            }
+
+            return _instance;
+            }
+
         public string GetConsumer(object message, IServiceOption options = null)
         {
             return GetNearestMatch(message.GetType().AssemblyQualifiedName, options);
@@ -23,7 +47,8 @@ namespace Common.RabbitMq.Routing
             var consumer = _routes.Where(it => messageType.StartsWith(it.Namespace))
                 .Select(it => new
                 {
-                    it.Consumer, it.Namespace.Length
+                    it.Consumer,
+                    it.Namespace.Length
                 })
                 .OrderBy(it => it.Length)
                 .Select(it => it.Consumer)

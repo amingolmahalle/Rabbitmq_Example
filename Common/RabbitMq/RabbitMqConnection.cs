@@ -2,7 +2,7 @@ using RabbitMQ.Client;
 
 namespace Common.RabbitMq
 {
-    public sealed class RabbitMqConnection : IRabbitMqConnection
+    public sealed class RabbitMqConnection
     {
         private const string UserName = "guest";
 

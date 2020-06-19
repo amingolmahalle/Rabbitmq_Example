@@ -6,9 +6,9 @@ namespace Common.RabbitMq.Extensions
     {
         public static void AddServiceBus(this IServiceCollection service, string endPointId, string endPointName)
         {
-            var rabbitMqBusInstance = new RabbitMqBus(endPointId,endPointName);
+            var rabbitMqBusInstance = new RabbitMqBus(endPointId, endPointName);
             
-            service.AddSingleton(typeof(IRabbitMqBus),rabbitMqBusInstance);
+            service.AddSingleton(typeof(IRabbitMqBus), rabbitMqBusInstance);
         }
     }
 }

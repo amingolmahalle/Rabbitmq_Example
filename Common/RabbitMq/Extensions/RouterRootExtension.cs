@@ -10,7 +10,7 @@ namespace Common.RabbitMq.Extensions
             this IServiceCollection service,
             Action<IRouteProvider> populateRouterAction)
         {
-            var router = new RouteProvider();
+            var router = RouteProvider.GetInstance();
             
             populateRouterAction?.Invoke(router);
 

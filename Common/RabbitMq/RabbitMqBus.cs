@@ -2,7 +2,6 @@ using System;
 using System.Text;
 using Common.RabbitMq.AssemblyScanner;
 using Common.RabbitMq.Routing;
-using CommonServiceLocator;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -25,8 +24,7 @@ namespace Common.RabbitMq
         {
             _endpointId = endpointId;
             _endpointName = endpointName;
-            _routeProvider = ServiceLocator.Current.GetInstance<IRouteProvider>();
-           
+            _routeProvider = RouteProvider.GetInstance();
             var connection = new RabbitMqConnection().TryConnection();
             _channel = connection.CreateModel();
 
