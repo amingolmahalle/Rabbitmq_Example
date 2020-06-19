@@ -12,7 +12,9 @@ namespace Producer
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddServiceBus(SystemConstants.HostEndpointId,SystemConstants.HostEndpointName);
+            services
+                .UseRouteProvider(r => { r.AddRouteFromConfigFile(); })
+                .AddServiceBus(SystemConstants.HostEndpointId, SystemConstants.HostEndpointName);
 
             services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }

@@ -14,7 +14,9 @@ namespace Consumer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddServiceBus(SystemConstants.HostEndpointId,SystemConstants.HostEndpointName);
+            services
+                .UseRouteProvider(r => { r.AddRouteFromConfigFile(); })
+                .AddServiceBus(SystemConstants.HostEndpointId, SystemConstants.HostEndpointName);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
