@@ -3,8 +3,8 @@
 
 This project is an example of how to run a RabbitMQ in Asp.Net Core 3.1 .
 
-for install and run 'RabbitMQ Management' by Docker,Run the following code in the terminal:
+For install and run <b>RabbitMQ Management</b> by Docker,run the following code in the terminal:
 
-<h5>sudo docker run -d --rm  --hostname my-rabbit --name rabbitmq-mg -p 15672:15672 -p 5672:5672 rabbitmq:3-management</h5>
+<code>sudo docker run -d --rm  --hostname my-rabbit --name rabbitmq-mg -p 15672:15672 -p 5672:5672 rabbitmq:3-management</code>
 
 for see rabbitmq managment, call <b>localhost:15672</b> in browser.
