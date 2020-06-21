@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using RabbitMq_Common.RabbitMq;
 
-namespace Common.RabbitMq.AssemblyScanner
+namespace RabbitMq_Common.RabbitMq.AssemblyScanner
 {
     public static class Types
     {
@@ -22,6 +21,7 @@ namespace Common.RabbitMq.AssemblyScanner
                         x.IsGenericType &&
                         x.GetGenericTypeDefinition() ==
                         typeof(IHandleCommand<>)))
+               // .Select(it => it.GenericTypeArguments[0])
                 .ToList();
         }
     }

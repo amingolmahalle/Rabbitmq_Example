@@ -1,33 +1,22 @@
+using System;
 using RabbitMQ.Client;
 
 namespace RabbitMq_Common.RabbitMq
 {
     public sealed class RabbitMqConnection
     {
-        private const string UserName = "guest";
+        private const string UserName = SystemConstants.Username;
 
-        private const string Password = "guest";
+        private const string Password = SystemConstants.Password;
 
-        private const string HostName = "localhost";
+        private const string HostName = SystemConstants.HostName;
 
         private IConnection _connection;
 
-        private bool _disposed;
-
         private readonly object _syncRoot = new object();
 
-        private bool IsConnected
-        {
-            get
-            {
-                if (_connection != null && _connection.IsOpen && !_disposed)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-        }
+        private bool IsConnected =>
+            _connection != null && _connection.IsOpen;
 
         public IConnection TryConnection()
         {
@@ -35,28 +24,25 @@ namespace RabbitMq_Common.RabbitMq
             {
                 lock (_syncRoot)
                 {
-                    var connectionFactory = new ConnectionFactory
+                    try
                     {
-                        HostName = HostName,
-                        UserName = UserName,
-                        Password = Password
-                    };
+                        var connectionFactory = new ConnectionFactory
+                        {
+                            HostName = HostName,
+                            UserName = UserName,
+                            Password = Password
+                        };
 
-                    _connection = connectionFactory.CreateConnection();
+                        _connection = connectionFactory.CreateConnection();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception($"{e} => RabbitMq Connection Failed");
+                    }
                 }
             }
 
             return _connection;
-        }
-
-        public void Dispose()
-        {
-            if (_disposed)
-                return;
-
-            _disposed = true;
-
-            _connection.Dispose();
         }
     }
 }

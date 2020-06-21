@@ -32,7 +32,7 @@ namespace RabbitMq_Common.RabbitMq.Routing
             }
 
             return _instance;
-            }
+        }
 
         public string GetConsumer(object message, IServiceOption options = null)
         {
@@ -84,7 +84,7 @@ namespace RabbitMq_Common.RabbitMq.Routing
             }
         }
 
-        public void AddCommandRoute(string @namespace, string consumer)
+        private void AddCommandRoute(string @namespace, string consumer)
         {
             _routes.Add(new MessageRouteTableValue
             {

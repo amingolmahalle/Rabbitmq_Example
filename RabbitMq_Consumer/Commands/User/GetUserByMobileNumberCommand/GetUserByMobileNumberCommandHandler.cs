@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using RabbitMq_Common.RabbitMq;
-using RabbitMq_Consumer.Contracts.User;
 using RabbitMq_Consumer.Repositories;
 
-namespace RabbitMq_Consumer.Commands.User.GetUserByMobileNumber
+namespace RabbitMq_Consumer.Commands.User.GetUserByMobileNumberCommand
 {
-    public class GetUserByMobileNumberCommandHandler : IHandleCommand<GetUserByMobileNumberCommand>
+    public class GetUserByMobileNumberCommandHandler : IHandleCommand<Contracts.User.GetUserByMobileNumberCommand>
     {
         private readonly IUserRepository _userRepository;
 
@@ -15,7 +14,7 @@ namespace RabbitMq_Consumer.Commands.User.GetUserByMobileNumber
            _userRepository = userRepository;
         }
 
-        public async Task Handle(GetUserByMobileNumberCommand message)
+        public async Task Handle(Contracts.User.GetUserByMobileNumberCommand message)
         {
             var result = await _userRepository.GetUserByMobileNumberAsync(message.MobileNumber);
             

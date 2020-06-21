@@ -32,6 +32,7 @@
           <e p="ServiceOptionBuilder.cs" t="Include" />
         </e>
         <e p="RabbitMq_Common.csproj" t="IncludeRecursive" />
+        <e p="SystemConstants.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -44,7 +45,7 @@
       <e p="RabbitMq_Consumer" t="IncludeRecursive">
         <e p="Commands" t="Include">
           <e p="User" t="Include">
-            <e p="GetUserByMobileNumber" t="Include">
+            <e p="GetUserByMobileNumberCommand" t="Include">
               <e p="GetUserByMobileNumberCommandHandler.cs" t="Include" />
             </e>
           </e>
@@ -94,6 +95,8 @@
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="mono_crash.mem.5189.1.blob" t="Include" />
+        <e p="mono_crash.mem.5726.1.blob" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">

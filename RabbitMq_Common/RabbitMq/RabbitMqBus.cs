@@ -1,9 +1,9 @@
 using System;
 using System.Text;
-using Common.RabbitMq.AssemblyScanner;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMq_Common.RabbitMq.AssemblyScanner;
 using RabbitMq_Common.RabbitMq.Routing;
 
 namespace RabbitMq_Common.RabbitMq
