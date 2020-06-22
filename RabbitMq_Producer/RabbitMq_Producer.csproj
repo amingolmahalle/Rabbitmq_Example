@@ -9,4 +9,9 @@
       <ProjectReference Include="..\RabbitMq_Consumer\RabbitMq_Consumer.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Commands" />
+      <Folder Include="Contracts" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -66,7 +67,11 @@ namespace RabbitMq_Common.RabbitMq
 
         private void Subscribe()
         {
-            var events = Types.GetHandlers();
+            var events = Types.GetHandlers()
+                .SelectMany(it => it.GetInterfaces()
+                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IHandleCommand<>)))
+                .Select(it => it.GenericTypeArguments[0])
+                .ToList();
 
             foreach (var @event in events)
             {

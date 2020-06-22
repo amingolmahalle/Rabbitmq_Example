@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RabbitMq_Common.Helpers;
-using RabbitMq_Consumer.Contracts.User;
+using RabbitMq_Consumer.Contracts.Users;
 using RabbitMq_Consumer.Entity;
 
 namespace RabbitMq_Consumer.Repositories

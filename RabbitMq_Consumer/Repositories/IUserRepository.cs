@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using RabbitMq_Consumer.Contracts.User;
+using RabbitMq_Consumer.Contracts.Users;
 
 namespace RabbitMq_Consumer.Repositories
 {

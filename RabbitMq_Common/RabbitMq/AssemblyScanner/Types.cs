@@ -8,7 +8,12 @@ namespace RabbitMq_Common.RabbitMq.AssemblyScanner
     {
         private static IEnumerable<Type> AllTypes
         {
-            get { return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()); }
+            get
+            {
+                return AppDomain.CurrentDomain
+                    .GetAssemblies()
+                    .SelectMany(x => x.GetTypes());
+            }
         }
 
         private static List<Type> _messageHandlers;
@@ -21,7 +26,6 @@ namespace RabbitMq_Common.RabbitMq.AssemblyScanner
                         x.IsGenericType &&
                         x.GetGenericTypeDefinition() ==
                         typeof(IHandleCommand<>)))
-               // .Select(it => it.GenericTypeArguments[0])
                 .ToList();
         }
     }

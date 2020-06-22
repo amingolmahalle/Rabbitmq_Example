@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RabbitMq_Common.RabbitMq;
-using RabbitMq_Consumer.Contracts.User;
+using RabbitMq_Consumer.Contracts.Users;
 
 namespace RabbitMq_Producer.Controllers
 {

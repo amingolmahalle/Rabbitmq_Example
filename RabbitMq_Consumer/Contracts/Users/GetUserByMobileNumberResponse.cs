@@ -1,4 +1,4 @@
-﻿namespace RabbitMq_Consumer.Contracts.User
+﻿namespace RabbitMq_Consumer.Contracts.Users
 {
     public class GetUserByMobileNumberResponse
     {
