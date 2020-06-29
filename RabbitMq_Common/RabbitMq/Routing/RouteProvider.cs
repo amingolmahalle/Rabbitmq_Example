@@ -55,7 +55,7 @@ namespace RabbitMq_Common.RabbitMq.Routing
                 .LastOrDefault();
 
             if (consumer == null)
-                throw new ArgumentOutOfRangeException($"for message type of {messageType} did not config any route");
+                throw new ArgumentOutOfRangeException($"for message type of '{messageType}' did not config any route");
 
             return consumer;
         }

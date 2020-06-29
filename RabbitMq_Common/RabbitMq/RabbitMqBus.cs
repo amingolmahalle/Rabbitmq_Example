@@ -75,8 +75,8 @@ namespace RabbitMq_Common.RabbitMq
 
             foreach (var @event in events)
             {
-                _channel.ExchangeDeclare(exchange: @event.FullName, type: ExchangeType.Fanout);
-                _channel.QueueBind(queue: _queue.QueueName, exchange: @event.FullName, routingKey: string.Empty);
+                _channel.ExchangeDeclare(exchange: @event.FullName, type: ExchangeType.Direct);
+                _channel.QueueBind(queue: _queue.QueueName, exchange: @event.FullName, routingKey: _queue.QueueName);
             }
         }
 
@@ -86,7 +86,7 @@ namespace RabbitMq_Common.RabbitMq
 
             consumer.Received += Message_Received;
 
-            _channel.BasicConsume(queue: _endpointName, autoAck: true, consumer: consumer);
+            _channel.BasicConsume(queue: _queue.QueueName, autoAck: true, consumer: consumer);
         }
 
         private void Message_Received(object sender, BasicDeliverEventArgs e)
