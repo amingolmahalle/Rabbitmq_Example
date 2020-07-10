@@ -26,6 +26,7 @@ namespace RabbitMq_Consumer
             }
 
             app.UseRouting();
+            app.UseRabbitMqListener();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); });

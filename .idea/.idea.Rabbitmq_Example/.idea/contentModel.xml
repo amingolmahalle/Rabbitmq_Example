@@ -14,6 +14,7 @@
           </e>
           <e p="Extensions" t="Include">
             <e p="RabbitMqBusRootExtension.cs" t="Include" />
+            <e p="RabbitMqListenerExtension.cs" t="Include" />
             <e p="RouterRootExtension.cs" t="Include" />
           </e>
           <e p="ICommand.cs" t="Include" />
@@ -72,6 +73,10 @@
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="mono_crash.mem.29730.1.blob" t="Include" />
+        <e p="mono_crash.mem.30402.1.blob" t="Include" />
+        <e p="mono_crash.mem.31876.1.blob" t="Include" />
+        <e p="mono_crash.mem.7964.1.blob" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
@@ -96,6 +101,16 @@
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="mono_crash.mem.26025.1.blob" t="Include" />
+        <e p="mono_crash.mem.27496.1.blob" t="Include" />
+        <e p="mono_crash.mem.27857.1.blob" t="Include" />
+        <e p="mono_crash.mem.28699.1.blob" t="Include" />
+        <e p="mono_crash.mem.28871.1.blob" t="Include" />
+        <e p="mono_crash.mem.29350.1.blob" t="Include" />
+        <e p="mono_crash.mem.30354.1.blob" t="Include" />
+        <e p="mono_crash.mem.31385.1.blob" t="Include" />
+        <e p="mono_crash.mem.7372.1.blob" t="Include" />
+        <e p="mono_crash.mem.7472.1.blob" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">

@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -11,13 +11,13 @@ namespace RabbitMq_Common.RabbitMq
 {
     public class RabbitMqBus : IRabbitMqBus
     {
-        private readonly IModel _channel;
+        private IModel _channel;
 
         private readonly string _endpointId;
 
         private readonly string _endpointName;
 
-        private readonly QueueDeclareOk _queue;
+        private QueueDeclareOk _queue;
 
         private readonly IRouteProvider _routeProvider;
 
@@ -26,12 +26,8 @@ namespace RabbitMq_Common.RabbitMq
             _endpointId = endpointId;
             _endpointName = endpointName;
             _routeProvider = RouteProvider.GetInstance();
-            var connection = new RabbitMqConnection().TryConnection();
-            _channel = connection.CreateModel();
-
-            _queue = _channel.QueueDeclare(_endpointName, true, false, false, null);
-
-            StartReceiver();
+            CreateChannel();
+            //  StartReceiver();
             Subscribe();
         }
 
@@ -59,25 +55,33 @@ namespace RabbitMq_Common.RabbitMq
                 : props.CorrelationId;
 
             _channel.BasicPublish(
-                exchange: exchange,
+                exchange: "hello",
                 routingKey: routingKey,
                 basicProperties: props,
                 body: message);
         }
 
-        private void Subscribe()
+        public void Subscribe()
         {
-            var events = Types.GetHandlers()
-                .SelectMany(it => it.GetInterfaces()
-                    .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IHandleCommand<>)))
-                .Select(it => it.GenericTypeArguments[0])
-                .ToList();
+            var handlers = Types.GetHandlers();
 
-            foreach (var @event in events)
+            foreach (var handler in handlers)
             {
-                _channel.ExchangeDeclare(exchange: @event.FullName, type: ExchangeType.Direct);
-                _channel.QueueBind(queue: _queue.QueueName, exchange: @event.FullName, routingKey: _queue.QueueName);
+                handler.GetMethod("Handle")
+                    ?.Invoke(Activator.CreateInstance(handler),
+                        null);
+                StartReceiver();
             }
+        }
+
+        private void CreateChannel()
+        {
+            var connection = new RabbitMqConnection().TryConnection();
+
+            _channel = connection.CreateModel();
+            _queue = _channel.QueueDeclare(_endpointName, true, false, false, null);
+            _channel.ExchangeDeclare(exchange: "hello", type: ExchangeType.Direct);
+            _channel.QueueBind(queue: _queue.QueueName, exchange: "hello", routingKey: _queue.QueueName, null);
         }
 
         private void StartReceiver()
@@ -85,17 +89,28 @@ namespace RabbitMq_Common.RabbitMq
             var consumer = new EventingBasicConsumer(_channel);
 
             consumer.Received += Message_Received;
-
-            _channel.BasicConsume(queue: _queue.QueueName, autoAck: true, consumer: consumer);
+            consumer.Received += (model, ea) =>
+            {
+                _channel.BasicConsume(queue: _queue.QueueName, autoAck: true, consumer: consumer);
+            };
         }
 
         private void Message_Received(object sender, BasicDeliverEventArgs e)
         {
+            Task.Factory.StartNew(async () =>
+            {
+                Console.WriteLine($"new message just received. {JsonConvert.SerializeObject(e)}");
+            });
         }
 
         private static byte[] PopulateMessage(object message)
         {
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+        }
+
+        public void Dispose()
+        {
+            _channel?.Dispose();
         }
     }
 }
