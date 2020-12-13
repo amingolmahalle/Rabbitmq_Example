@@ -1,14 +1,12 @@
 using System.Threading.Tasks;
+using RabbitMq_Common.RabbitMq.Event;
 
 namespace RabbitMq_Common.RabbitMq
 {
-    public interface IHandleCommand<in T> : IHandleCommand where T : ICommand
-    {
-        Task Handle(T message);
-    }
-
-    /// <summary> marker </summary>
     public interface IHandleCommand
     {
+        bool CanHandle(IEvent message);
+
+        Task HandleAsync(IEvent message, IEventAckNack eventAckNack);
     }
 }

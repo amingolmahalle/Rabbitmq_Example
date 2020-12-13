@@ -2,8 +2,10 @@ namespace RabbitMq_Common
 {
     public static class SystemConstants
     {
-        public const string Username = "guest";
-        public const string Password = "guest";
         public const string HostName = "localhost";
+        public const int Port = 5672;
+        public const string Username = "user";
+        public const string Password = "bitnami";//"Adm!n0012";
+        public const int RetryConnectionInitSleepSeconds = 2;
     }
 }

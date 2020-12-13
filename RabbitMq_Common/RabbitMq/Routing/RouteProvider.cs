@@ -34,16 +34,13 @@ namespace RabbitMq_Common.RabbitMq.Routing
             return _instance;
         }
 
-        public string GetConsumer(object message, IServiceOption options = null)
+        public string GetConsumer(object message)
         {
-            return GetNearestMatch(message.GetType().AssemblyQualifiedName, options);
+            return GetNearestMatch(message.GetType().AssemblyQualifiedName);
         }
 
-        private string GetNearestMatch(string messageType, IServiceOption options = null)
+        private string GetNearestMatch(string messageType)
         {
-            if (options != null && !string.IsNullOrEmpty(options.Target))
-                return options.Target;
-
             var consumer = _routes.Where(it => messageType.StartsWith(it.Namespace))
                 .Select(it => new
                 {

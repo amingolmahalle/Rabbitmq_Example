@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RabbitMq_Common.RabbitMq.Extensions;
+using RabbitMq_Common.Extension;
+using RabbitMq_Common.RabbitMq.Event;
 
 namespace RabbitMq_Producer
 {
@@ -11,10 +12,8 @@ namespace RabbitMq_Producer
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                .UseRouteProvider(r => { r.AddRouteFromConfigFile(); })
-                .AddServiceBus(SystemConstants.HostEndpointId, SystemConstants.HostEndpointName);
-
+            services.AddRabbitMqServices();
+            
             services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
@@ -27,6 +26,15 @@ namespace RabbitMq_Producer
 
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            InitStartupServices(app);
+        }
+
+        private void InitStartupServices(IApplicationBuilder app)
+        {
+            IRabbitConnector eventProducerService = app.ApplicationServices.GetService<IRabbitConnector>();
+
+            eventProducerService.InitializeAsync(SystemConstants.ServiceName);
         }
     }
 }
