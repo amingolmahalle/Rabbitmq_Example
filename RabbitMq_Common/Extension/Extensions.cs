@@ -32,10 +32,10 @@ namespace RabbitMq_Common.Extension
 
             return default;
         }
-        
-        public static byte[] PopulateMessage(this object message)
+
+        public static byte[] PopulateMessage(this string message)
         {
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+            return Encoding.UTF8.GetBytes(message);
         }
 
         public static string ObjectSerializer(this IProducerCommand command)

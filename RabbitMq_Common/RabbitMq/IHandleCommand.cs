@@ -7,6 +7,6 @@ namespace RabbitMq_Common.RabbitMq
     {
         bool CanHandle(IEvent message);
 
-        Task HandleAsync(IEvent message, IEventAckNack eventAckNack);
+        Task HandleAsync(IEvent message, ulong deliveryTag, IEventAckNack eventAckNack);
     }
 }

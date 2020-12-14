@@ -40,10 +40,8 @@ namespace RabbitMq_Consumer.Handlers.SendEmail
             return isValid;
         }
 
-        public async Task HandleAsync(IEvent message, IEventAckNack eventAckNack)
+        public async Task HandleAsync(IEvent message, ulong deliveryTag, IEventAckNack eventAckNack)
         {
-            ulong deliveryTag = message.GetContext<ulong>("deliveryTag");
-
             SendEmailCommand command;
             try
             {
@@ -57,43 +55,13 @@ namespace RabbitMq_Consumer.Handlers.SendEmail
                 throw new HandlingMinimumRequirementsFailedException("could not deserialize payload", ex);
             }
 
-            if (!ValidationCommand(command))
-                throw new HandlingMinimumRequirementsFailedException("validation command is not valid");
+            if (!SendEmailValidation.ValidationCommand(command, _logger))
+                throw new HandlingMinimumRequirementsFailedException("validation information is not valid");
 
             Console.WriteLine(
                 $"Send Email To :{command?.Email} with Subject: {command?.Subject} and Message: {command?.Message}");
 
             eventAckNack.Ack(deliveryTag);
-        }
-
-        private bool ValidationCommand(SendEmailCommand command)
-        {
-            var isValid = true;
-
-            if (string.IsNullOrWhiteSpace(command?.Email))
-            {
-                _logger?.LogError($"invalid Email Address: empty or null, can not process nack/no-retry");
-
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(command?.Message))
-            {
-                _logger?.LogError($"invalid Email Message: empty or null, can not process nack/no-retry");
-
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(command?.Subject))
-            {
-                _logger?.LogError($"invalid Email Subject: empty or null, can not process nack/no-retry");
-
-                isValid = false;
-            }
-
-            //TODO: Check Regex Email
-            
-            return isValid;
         }
     }
 }

@@ -150,7 +150,7 @@ namespace RabbitMq_Common.RabbitMq
                 //[SendEmail]
                 _readChannel.ExchangeDeclare(exchange, ExchangeType.Direct, true, false, null);
                 _readChannel.QueueBind(queueName, exchange, queueName, null);
-                //TODO: abstract queueBind class for consumers
+                //TODO (optional): abstract queueBind class for consumers(prefetch)
             }
 
             eventingConsumer.Received += MessageReceived;
@@ -179,6 +179,7 @@ namespace RabbitMq_Common.RabbitMq
                 ev.RoutingKey = e.RoutingKey;
                 ev.Context.Add("deliveryTag", e.DeliveryTag);
                 ev.Context.Add("exchange", exchange);
+                ev.EndpointId = e.BasicProperties.AppId;
 
                 _jobDispatcher
                     .DispatchAsync(ev, exchange, this)

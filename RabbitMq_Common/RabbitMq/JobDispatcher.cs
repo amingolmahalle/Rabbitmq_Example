@@ -23,7 +23,6 @@ namespace RabbitMq_Common.RabbitMq
         {
             ulong deliveryTag = message.GetContext<ulong>("deliveryTag");
 
-
             if (string.IsNullOrWhiteSpace(message.Payload))
             {
                 _logger?.LogError(
@@ -42,7 +41,7 @@ namespace RabbitMq_Common.RabbitMq
             {
                 try
                 {
-                    await handler.HandleAsync(message, ack);
+                    await handler.HandleAsync(message, deliveryTag, ack);
 
                     return;
                 }

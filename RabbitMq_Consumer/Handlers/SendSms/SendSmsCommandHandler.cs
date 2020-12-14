@@ -40,10 +40,8 @@ namespace RabbitMq_Consumer.Handlers.SendSms
             return isValid;
         }
 
-        public async Task HandleAsync(IEvent message, IEventAckNack eventAckNack)
+        public async Task HandleAsync(IEvent message, ulong deliveryTag, IEventAckNack eventAckNack)
         {
-            ulong deliveryTag = message.GetContext<ulong>("deliveryTag");
-
             SendSmsCommand command;
             try
             {
@@ -57,36 +55,13 @@ namespace RabbitMq_Consumer.Handlers.SendSms
                 throw new HandlingMinimumRequirementsFailedException("could not deserialize payload", ex);
             }
 
-            if (!ValidationCommand(command))
-                throw new HandlingMinimumRequirementsFailedException("validation command is not valid");
+            if (!SendSmsValidation.ValidationCommand(command, _logger))
+                throw new HandlingMinimumRequirementsFailedException("validation information is not valid");
 
             Console.WriteLine(
                 $"Send Sms To :{command?.Mobile} with Message: {command?.Message}");
 
             eventAckNack.Ack(deliveryTag);
-        }
-
-        private bool ValidationCommand(SendSmsCommand command)
-        {
-            var isValid = true;
-
-            if (string.IsNullOrWhiteSpace(command?.Mobile))
-            {
-                _logger?.LogError($"invalid Mobile Number: empty or null, can not process nack/no-retry");
-
-                isValid = false;
-            }
-
-            if (string.IsNullOrWhiteSpace(command?.Message))
-            {
-                _logger?.LogError($"invalid Sms Message: empty or null, can not process nack/no-retry");
-
-                isValid = false;
-            }
-
-            //TODO: Check Regex Mobile
-
-            return isValid;
         }
     }
 }

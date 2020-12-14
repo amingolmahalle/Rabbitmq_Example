@@ -12,7 +12,6 @@
         </e>
         <e p="Extension" t="Include">
           <e p="Extensions.cs" t="Include" />
-          <e p="RouterRootExtension.cs" t="Include" />
           <e p="ServiceCollectionExtension.cs" t="Include" />
         </e>
         <e p="RabbitMq" t="Include">
@@ -29,20 +28,14 @@
             <e p="IEvent.cs" t="Include" />
             <e p="IEventAckNack.cs" t="Include" />
             <e p="IEventFactory.cs" t="Include" />
-            <e p="IEventProducer.cs" t="Include" />
             <e p="IJobDispatcher.cs" t="Include" />
+            <e p="IRabbitConnector.cs" t="Include" />
           </e>
           <e p="IConsumerCommand.cs" t="Include" />
           <e p="IHandleCommand.cs" t="Include" />
           <e p="IProducerCommand.cs" t="Include" />
           <e p="JobDispatcher.cs" t="Include" />
           <e p="RabbitConnector.cs" t="Include" />
-          <e p="Routing" t="Include">
-            <e p="IRouteProvider.cs" t="Include" />
-            <e p="MessageRouteTableValue.cs" t="Include" />
-            <e p="MessageType.cs" t="Include" />
-            <e p="RouteProvider.cs" t="Include" />
-          </e>
         </e>
         <e p="RabbitMq_Common.csproj" t="IncludeRecursive" />
         <e p="SystemConstants.cs" t="Include" />
@@ -57,16 +50,19 @@
       </e>
       <e p="RabbitMq_Consumer" t="IncludeRecursive">
         <e p="Extension" t="Include">
+          <e p="Extensions.cs" t="Include" />
           <e p="ServiceCollectionExtension.cs" t="Include" />
         </e>
         <e p="Handlers" t="Include">
           <e p="SendEmail" t="Include">
             <e p="SendEmailCommand.cs" t="Include" />
             <e p="SendEmailCommandHandler.cs" t="Include" />
+            <e p="SendEmailValidation.cs" t="Include" />
           </e>
           <e p="SendSms" t="Include">
             <e p="SendSmsCommand.cs" t="Include" />
             <e p="SendSmsCommandHandler.cs" t="Include" />
+            <e p="SendSmsValidation.cs" t="Include" />
           </e>
         </e>
         <e p="Program.cs" t="Include" />
