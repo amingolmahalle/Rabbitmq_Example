@@ -12,3 +12,24 @@ for see rabbitmq managment, call <b>localhost:15672</b> in browser.
 <b>username:</b> user
 
 <b>password:</b> bitnami
+
+Url for calling apis:
+
+<b>localhost:7000/Notification/SendEmail</b>
+
+body:
+<text>
+{
+    "subject":"test",
+    "message":"Hello amin Golmahalle",
+    "Email":"test@gmail.com"
+}
+</text>
+
+<b>localhost:7000/Notification/SendSms</b>
+
+body:
+{
+    "message":"Hello amin Golmahalle",
+    "mobile":"09123456789"
+}
